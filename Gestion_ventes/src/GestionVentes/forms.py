@@ -7,9 +7,19 @@ class materielForm(forms.ModelForm):
         model= Materiel
         fields = "__all__"
 
+
+
 # Employees
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
 class employeForm(forms.ModelForm):
+    date_naiss = forms.DateField(widget=DateInput)
+
     class Meta:
+        widgets = {'my_date_field' : DateInput()}
         model= Employee
         fields = "__all__"
 

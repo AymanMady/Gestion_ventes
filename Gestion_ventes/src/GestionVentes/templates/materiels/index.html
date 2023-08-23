@@ -27,6 +27,39 @@
                 </div>
               </div>
               <br>
+              <div>
+                    <form method="post" action="{% url 'materiel' %}">
+                          {% csrf_token %}
+                          <div class="row">
+                            <div class="col-md-5">
+                              <select class="form-control" name="id_etablissement">
+                                <option selected disabled> Établissements </option>
+                                {% for etablissement in etablissements %}
+                                  <option value="{{ etablissement.id }}">{{ etablissement.nom_etablissement }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                            <div class="col-md-5">
+                              <select class="form-control" name="id_emplacement"> <!-- Corrected the name attribute -->
+                                <option selected disabled> Emplacements </option>
+                                {% for emplacement in emplacements %}
+                                  <option value="{{ emplacement.id }}">{{ emplacement.designation }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                            <div class="col-md-2">
+                              <button class="mt-10 btn btn-primary" type="submit">Filtrer</button>
+                            </div>
+                          </div>
+                        </form>
+                  </div>
+              <br>
+              {% if selected_etablissement or selected_emplacement %}
+                <div class="filtered-info">
+                  <p>Filtré par établissement: {{ selected_etablissement }}</p>
+                  <p>Filtré par emplacement: {{ selected_emplacement }}</p>
+                </div>
+              {% endif %}
               <table class="mb-0 table" id="myTable">
                 <thead>
                   <tr>
@@ -63,6 +96,7 @@
 
                   </tr>
                   {% endfor %}
+
                 </tbody>
               </table>
             </div>

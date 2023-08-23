@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+
                     <div class="app-main__inner">
                         <div class="tab-content">
                             <div class="tab-pane tabs-animation fade show active" id="tab-content-0" role="tabpanel">
@@ -25,7 +26,10 @@
                                             </div>
                                             <div class="form-row">
                                                 <div class="col-md-6">
-                                                    <div class="position-relative form-group"><label  class="">Date de Naissance</label><input name="date_naiss"  type="date" class="form-control" value="{{employe.date_naiss}}"></div>
+                                                    <div class="position-relative form-group">
+                                                        <label class="">Date de Naissance</label>
+                                                        <input type="date" name="date_naiss" value="{{ employe.date_naiss|date:'Y-m-d' }}"  class="form-control" >
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="position-relative form-group"><label  class="">Lieu de Naissance</label><input name="lieu_naiss"  type="text" class="form-control" value="{{employe.lieu_naiss}}"></div>
@@ -57,4 +61,5 @@
                             </div>
                         </div>
                     </div>
+
 {% endblock %}

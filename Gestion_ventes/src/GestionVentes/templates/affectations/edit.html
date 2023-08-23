@@ -44,7 +44,7 @@
                                 <div class="position-relative form-group">
                                     <label>Date:</label>
                                     <input type="date" name="{{ form.date.name }}" class="form-control"
-                                        value="{{ affectation.date }}" required>
+                                        value="{{ affectation.date|date:'Y-m-d' }}" required>
                                 </div>
                             </div>
                         </div>

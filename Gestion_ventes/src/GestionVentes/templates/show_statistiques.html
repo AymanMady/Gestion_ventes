@@ -6,12 +6,28 @@
 
 {% block content %}
 <div class="app-main__inner">
+    <div class="app-page-title">
+        <div class="page-title-wrapper">
+            <div class="page-title-heading">
+                <div class="page-title-icon">
+                    <i class="pe-7s-graph text-success">
+                    </i>
+                </div>
+                <div>
+                    <div class="page-title-subheading"><h4><b>{{ etablissements.nom_etablissement }}</b></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="page-title-actions">
+                <div class="d-inline-block dropdown">
+                    <a href="{% url 'statistiques' %}" class="mt-2 btn btn-primary">
+                        <i class="fa fa-fw" aria-hidden="true"></i> Retour
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
   <div class="app-page-title">
-      <a href="{% url 'statistiques' %}" class="mt-2 btn btn-primary">
-          <i class="fa fa-fw" aria-hidden="true"></i> Retour
-      </a>
-      <br>
-      <br>
       <div class="row">
             <div class="col-md-6 col-xl-4">
                 <div class="card mb-3 widget-content bg-arielle-smile">

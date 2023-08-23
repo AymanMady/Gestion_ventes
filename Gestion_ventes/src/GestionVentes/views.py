@@ -1,19 +1,18 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from accounts.models import Materiel,Employee,Etablissement,Emplacement,Affectation
 from .forms import materielForm,employeForm,etablissementForm,emplacementForm,affectationForm
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count , Q
-
+from django.template import loader
+from xhtml2pdf import pisa
 
 
 
 
 @login_required(login_url='login')
 def homePage(request):
-    # Get a list of all establishments
     establishments = Etablissement.objects.all()
 
-    # Calculate the percentage of materials in each establishment
     establishment_data = []
     for establishment in establishments:
         total_materials = Materiel.objects.count()
@@ -30,16 +29,13 @@ def homePage(request):
         })
 
 
-    # Calculate counts of materials in each state
     bon_etat_count = Materiel.objects.filter(etat='Bon etat').count()
     hs_count = Materiel.objects.filter(etat='HS').count()
     neuve_count = Materiel.objects.filter(etat='Neuve').count()
 
-    # calcul total des materiels
+
     materiel_count = Materiel.objects.filter().count()
-    # calcul total des materiels
     emplacement_count = Emplacement.objects.filter().count()
-    # calcul total des materiels
     employees_count = Employee.objects.filter().count()
 
     context = {
@@ -99,6 +95,8 @@ def show_statistiques(request):
             'hs_count': hs_count,
             'neuve_count': neuve_count,
             'emplacement_data': emplacement_data,
+        'etablissements': selected_etablissement,
+
         })
 
 
@@ -107,12 +105,32 @@ def show_statistiques(request):
 @login_required(login_url='login')
 
 def materiel(request):
+    id_etablissement = request.POST.get('id_etablissement')
+    id_emplacement = request.POST.get('id_emplacement')
+    all_etablissement = Etablissement.objects.all()
+    all_emplacement = Emplacement.objects.all()
     materiels = Materiel.objects.all()
+
+    if id_etablissement or id_emplacement:
+        if id_etablissement:
+            materiels = materiels.filter(affectation__id_emplacement__id_etablissement_id=id_etablissement)
+        if id_emplacement:
+            materiels = materiels.filter(affectation__id_emplacement_id=id_emplacement)
+
     for materiel in materiels:
         affectations = Affectation.objects.filter(id_materiel=materiel)
         emplacements = [affectation.id_emplacement.designation for affectation in affectations]
         materiel.emplacements = emplacements
-    return render(request,"materiels/index.html",{"materiels": materiels,"navbar":'materiel'})
+
+    context = {
+        "materiels": materiels,
+        "emplacements": all_emplacement,
+        "etablissements": all_etablissement,
+        "navbar": 'materiel',
+    }
+
+    return render(request, "materiels/index.html", context)
+
 def load_form_materiel(request):
     form = materielForm()
     return render(request, "materiels/add.html",{'form':form,"navbar":'materiel'})
@@ -226,18 +244,36 @@ def delete_etablissement(request, id):
     etablissement.delete()
     return redirect('etablissement')
 
+def show_etablissement(request, id):
+    etablissements = Etablissement.objects.get(id=id)
+    emplacements = Emplacement.objects.filter(id_etablissement=etablissements)
+    materiels = Affectation.objects.filter(id_emplacement__id_etablissement=etablissements).select_related('id_materiel')
+
+    return render(request, 'etablissements/show.html', {
+        'etablissements': etablissements,
+        'navbar': 'etablissement',
+        'emplacements': emplacements,
+        'materiels': materiels,
+    })
+
 # Emplacement
 @login_required(login_url='login')
 
 def emplacement(request):
-    all_emplacement= Emplacement.objects.all()
-    return render(request,"emplacements/index.html",{"emplacements": all_emplacement,"navbar":'emplacement'})
+    emplacements = Emplacement.objects.all()
+    all_etablisement= Etablissement.objects.all()
+    id_etablissement = request.POST.get('id_etablissement')
+    if id_etablissement:
+            emplacements = emplacements.filter(affectation__id_emplacement__id_etablissement_id=id_etablissement)
+
+
+    return render(request,"emplacements/index.html",{"emplacements": emplacements,"navbar":'emplacement',"etablissements":all_etablisement})
 
 def load_form_emplacement(request):
     all_employe = Employee.objects.all()
     all_etablissement = Etablissement.objects.all()
     form = emplacementForm()
-    return render(request, "emplacements/add.html",{'form':form,"navbar":'etablissement','employes':all_employe,'etablissements':all_etablissement})
+    return render(request, "emplacements/add.html",{'form':form,"navbar":'emplacement','employes':all_employe,'etablissements':all_etablissement})
 def add_emplacement(request):
     form = emplacementForm(request.POST)
     form.save()
@@ -257,3 +293,35 @@ def delete_emplacement(request, id):
     emplacement = Emplacement.objects.get(id=id)
     emplacement.delete()
     return redirect('emplacement')
+
+def materiel_emplacment(request, id):
+    emplacement = Emplacement.objects.get(id=id)
+    materiels = Materiel.objects.all()
+    materiels = materiels.filter(affectation__id_emplacement_id=emplacement)
+    return render(request,'emplacements/materiel_emplacment.html',{'emplacement':emplacement,'materiels':materiels})
+
+
+
+def materiel_emplacment(request, id):
+    emplacement = Emplacement.objects.get(id=id)
+    materiels = Materiel.objects.all()
+    materiels = materiels.filter(affectation__id_emplacement_id=emplacement)
+    # Supposons que vous ayez des données à passer au template
+    data = {'emplacement':emplacement,'materiels':materiels}
+
+    # Chargez le template à l'aide du moteur de template
+    template = loader.get_template('emplacements/materiel_emplacment.html')
+
+    # Rendez les données dans le template en utilisant le contexte
+    rendered_template = template.render(data, request)
+
+    # Utilisez xhtml2pdf pour générer le PDF à partir du contenu rendu
+    pdf_output = pisa.CreatePDF(rendered_template)
+
+    if not pdf_output.err:
+        # Créez une réponse HttpResponse avec le contenu PDF généré
+        response = HttpResponse(pdf_output.dest.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = 'filename="list_materiels.pdf"'  # Nom du fichier de téléchargement
+        return response
+
+    return HttpResponse('Erreur lors de la génération du PDF.', status=500)

@@ -56,6 +56,7 @@ urlpatterns = [
     path('edit_etablissement/<int:id>', views.edit_etablissement, name="edit_etablissement"),
     path('update_etablissement/<int:id>', views.update_etablissement, name="update_etablissement"),
     path('delete_etablissement/<int:id>', views.delete_etablissement, name="delete_etablissement"),
+    path('show_etablissement/<int:id>', views.show_etablissement, name="show_etablissement"),
 
     # emplacement
     path('emplacement/', views.emplacement, name="emplacement"),
@@ -64,6 +65,7 @@ urlpatterns = [
     path('edit_emplacement/<int:id>', views.edit_emplacement, name="edit_emplacement"),
     path('update_emplacement/<int:id>', views.update_emplacement, name="update_emplacement"),
     path('delete_emplacement/<int:id>', views.delete_emplacement, name="delete_emplacement"),
+    path('materiel_emplacment/<int:id>', views.materiel_emplacment, name="materiel_emplacment"),
 
     # Affectation
     path('affectation/', views.affectation, name="affectation"),

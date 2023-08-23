@@ -1,7 +1,7 @@
 {% extends 'navbar.html' %}
 
 {% block title %}
-  Matériels
+  Emplacemnets
 {% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
             <div class="card-body">
               <div style="display: flex ; justify-content: space-between;">
                 <div>
-                  <h5 class="card-title">Emplacements </h5>
+                  <h5 class="card-title">liste des Emplacements </h5>
                 </div>
                 <div style="display: flex ; justify-content: space-between;">
                   <div style="display: flex ; justify-content: space-between;" >
@@ -27,13 +27,31 @@
                 </div>
               </div>
               <br>
+                <div>
+                    <form method="post" action="{% url 'emplacement' %}">
+                          {% csrf_token %}
+                          <div class="row">
+                            <div class="col-md-5">
+                              <select class="form-control" name="id_etablissement">
+                                <option selected disabled>les directions </option>
+                                {% for etablissement in etablissements %}
+                                  <option value="{{ etablissement.id }}">{{ etablissement.nom_etablissement }}</option>
+                                {% endfor %}
+                              </select>
+                            </div>
+                            <div class="col-md-2">
+                              <button class="mt-10 btn btn-primary" type="submit">Filtrer</button>
+                            </div>
+                          </div>
+                        </form>
+                  </div>
               <table class="mb-0 table" id="myTable">
                 <thead>
                   <tr>
                     <th>Desgination</th>
-                    <th>id_etablisement</th>
-                    <th>id_employee</th>
-                    <th colspan="2" >Actions</th>
+                    <th>Directions</th>
+                    <th>Employee</th>
+                    <th colspan="3" >Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -48,6 +66,9 @@
                     </td>
                     <td>
                       <a class='button' href="/delete_emplacement/{{i.id}}">Supprimer</a>
+                    </td>
+                    <td>
+                      <a class='button' href="/materiel_emplacment/{{i.id}}">générer PDF</a>
                     </td>
                   </tr>
                   {% endfor %}

@@ -13,6 +13,10 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link  rel="stylesheet" href="{% static 'main.css' %}">
     <script type="text/javascript" src="{% static 'assets/scripts/Chart.min.js' %}"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
 </head>
 <body>
     <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
@@ -63,12 +67,6 @@
                             <a href="{% url 'statistiques' %}" class="nav-link">
                                 <i class="nav-link-icon fa fa-database"> </i>
                                 Statistiques
-                            </a>
-                        </li>
-                        <li class="dropdown nav-item">
-                            <a href="javascript:void(0);" class="nav-link">
-                                <i class="nav-link-icon fa fa-cog"></i>
-                                Paramètres
                             </a>
                         </li>
                     </ul>
@@ -143,7 +141,7 @@
                                 <br>
                                 <li>
                                     <a href="{% url 'etablissement'  %}" {% if navbar == "etablissement" %} class="mm-active" {% endif %} ><i class="metismenu-icon fa fa-fw" aria-hidden="true" title="Copy to use building"></i>
-                                        Gestion des établissements
+                                        Gestion des directions
                                     </a>
                                 </li>
                                 <br>
